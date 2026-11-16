@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1366" height="768" viewBox="0 0 1366 768" role="img" aria-labelledby="title desc">
+  <title id="title">PyBank Digital &amp; Analytics</title>
+  <desc id="desc">Imagem promocional do painel PyBank com consulta de conta, depósitos e saques, transferências e extrato.</desc>
+  <defs>
+    <style>
+      text{font-family:Inter,Arial,sans-serif;fill:#f8fafc}.muted{fill:#94a3b8}.green{fill:#34d399}.small{font-size:13px}.label{font-size:16px;font-weight:600}.input{fill:#0f172a;stroke:#475569;stroke-width:1}.card{fill:#1e293b;stroke:#334155;stroke-width:1}
+    </style>
+  </defs>
+  <rect width="1366" height="768" fill="#0f172a"/>
+  <g transform="translate(100 0)">
+    <text x="0" y="53" font-size="34">🏦</text>
+    <text x="49" y="53" class="green" font-size="31" font-weight="700">PyBank Digital &amp; Analytics</text>
+    <text x="0" y="79" class="muted" font-size="14">FastAPI + SQLite + SHA-256 + Visualização Gráfica</text>
+    <circle cx="974" cy="54" r="6" fill="#10b981"/>
+    <text x="989" y="59" class="small">API Local: http://127.0.0.1:8000</text>
+    <path d="M0 108H1152" stroke="#334155"/>
+    <!-- Account lookup and creation -->
+    <rect x="0" y="141" width="368" height="136" rx="13" class="card"/>
+    <text x="28" y="187" class="label">🔍  Consultar Conta</text>
+    <rect x="25" y="210" width="230" height="42" rx="9" class="input"/>
+    <text x="38" y="236" class="muted" font-size="14">ID da Conta (ex: 111)</text>
+    <rect x="263" y="210" width="80" height="42" rx="9" fill="#059669"/>
+    <text x="279" y="236" font-size="14" font-weight="700">Buscar</text>
+    <rect x="0" y="301" width="368" height="334" rx="13" class="card"/>
+    <text x="28" y="348" class="label">✚  Abrir Nova Conta</text>
+    <rect x="25" y="370" width="318" height="38" rx="8" class="input"/><text x="38" y="394" class="muted" font-size="14">Número da Conta (ID)</text>
+    <rect x="25" y="420" width="318" height="38" rx="8" class="input"/><text x="38" y="444" class="muted" font-size="14">Nome do Titular</text>
+    <rect x="25" y="470" width="318" height="38" rx="8" class="input"/><text x="38" y="494" font-size="14">0</text>
+    <rect x="25" y="520" width="318" height="38" rx="8" class="input"/><text x="38" y="544" class="muted" font-size="14">Senha (mín. 6 dígitos)</text>
+    <rect x="25" y="570" width="318" height="40" rx="9" fill="#2563eb"/><text x="143" y="595" font-size="14" font-weight="700">Criar Conta</text>
+    <!-- Transactions -->
+    <rect x="392" y="141" width="368" height="292" rx="13" class="card"/>
+    <text x="420" y="187" class="label">💸  Depósito e Saque</text>
+    <rect x="417" y="210" width="318" height="38" rx="8" class="input"/><text x="430" y="234" class="muted" font-size="14">ID da Conta</text>
+    <rect x="417" y="260" width="318" height="38" rx="8" class="input"/><text x="430" y="284" class="muted" font-size="14">Valor (R$)</text>
+    <rect x="417" y="310" width="318" height="38" rx="8" class="input"/><text x="430" y="334" class="muted" font-size="14">Senha (obrigatória para saque)</text>
+    <rect x="417" y="368" width="153" height="40" rx="9" fill="#059669"/><text x="451" y="394" font-size="14" font-weight="700">+ Depositar</text>
+    <rect x="582" y="368" width="153" height="40" rx="9" fill="#e11d48"/><text x="626" y="394" font-size="14" font-weight="700">- Sacar</text>
+    <rect x="392" y="457" width="368" height="311" rx="13" class="card"/>
+    <text x="420" y="503" class="label">🔄  Transferência</text>
+    <rect x="417" y="526" width="318" height="38" rx="8" class="input"/><text x="430" y="550" class="muted" font-size="14">Conta de Origem (ID)</text>
+    <rect x="417" y="576" width="318" height="38" rx="8" class="input"/><text x="430" y="600" class="muted" font-size="14">Conta de Destino (ID)</text>
+    <rect x="417" y="626" width="318" height="38" rx="8" class="input"/><text x="430" y="650" class="muted" font-size="14">Valor (R$)</text>
+    <rect x="417" y="676" width="318" height="38" rx="8" class="input"/><text x="430" y="700" class="muted" font-size="14">Sua Senha</text>
+    <rect x="417" y="726" width="318" height="40" rx="9" fill="#4f46e5"/><text x="517" y="752" font-size="14" font-weight="700">Transferir Agora</text>
+    <!-- Statement -->
+    <rect x="784" y="141" width="368" height="627" rx="13" class="card"/>
+    <text x="812" y="187" class="label">▤  Extrato</text>
+    <text x="1080" y="185" class="green" font-size="12">Atualizar</text>
+    <text x="846" y="265" class="muted" font-size="13">Busque uma conta para ver o histórico.</text>
+  </g>
+</svg>

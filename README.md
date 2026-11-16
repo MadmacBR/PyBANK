@@ -1,5 +1,7 @@
 # 🏦 PyBank Digital & Analytics — API Bancária
 
+![Prévia promocional do painel PyBank](assets/pybank-dashboard.svg)
+
 Aplicação demonstrativa de gerenciamento de contas bancárias desenvolvida em Python com FastAPI, SQLite e um painel web interativo.
 
 ## Funcionalidades
