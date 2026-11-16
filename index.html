@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyBank Digital & Analytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans p-6">
+
+    <div class="max-w-6xl mx-auto">
+        <header class="flex flex-col md:flex-row justify-between items-center border-b border-slate-700 pb-6 mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-emerald-400">🏦 PyBank Digital & Analytics</h1>
+                <p class="text-slate-400 text-sm mt-1">FastAPI + SQLite + SHA-256 + Visualização Gráfica</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex items-center gap-2">
+                <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs text-slate-300">API Local: http://127.0.0.1:8000</span>
+            </div>
+        </header>
+
+        <div id="alerta" class="hidden mb-6 p-4 rounded-lg border font-medium transition-all"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="space-y-6">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
+                    <h2 class="text-lg font-semibold text-white mb-4">🔍 Consultar Conta</h2>
+                    <div class="flex gap-2">
+                        <input type="number" id="consultaId" placeholder="ID da Conta (ex: 111)" 
+                            class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-400">
+                        <button onclick="consultarConta()" 
+                            class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-2 rounded-lg transition">
+                            Buscar
+                        </button>
+                    </div>
+
+                    <div id="painelConta" class="hidden mt-6 pt-4 border-t border-slate-700">
+                        <p class="text-xs text-slate-400 uppercase">Titular</p>
+                        <p id="displayTitular" class="text-xl font-bold text-white mb-3">-</p>
+                        
+                        <p class="text-xs text-slate-400 uppercase">Saldo Disponível</p>
+                        <p id="displaySaldo" class="text-3xl font-extrabold text-emerald-400">R$ 0,00</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
+                    <h2 class="text-lg font-semibold text-white mb-4">➕ Abrir Nova Conta</h2>
+                    <form onsubmit="criarConta(event)" class="space-y-3">
+                        <input type="number" id="novoId" placeholder="Número da Conta (ID)" required
+                            class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm">
+                        <input type="text" id="novoTitular" placeholder="Nome do Titular" required
+                            class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm">
+                        <input type="number" step="0.01" id="novoSaldo" placeholder="Saldo Inicial (R$)" value="0" required
+                            class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm">
+                        <input type="password" id="novaSenha" placeholder="Senha (mín. 6 dígitos)" minlength="6" required
+                            class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm">
+                        <button type="submit" 
+                            class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded-lg transition">
+                            Criar Conta
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
+                    <h2 class="text-lg font-semibold text-white mb-4">💸 Depósito e Saque</h2>
+                    <div class="space-y-3">
+                        <input type="number" id="opContaId" placeholder="ID da Conta" 
+                            class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm">
+                        <input type="number" step="0.01" id="opValor" placeholder="Valor (R$)" 
+                            class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm">
+                        <input type="password" id="opSenha" placeholder="Senha (obrigatória para saque)" 
+                            class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm">
+                        
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            <button onclick="realizarOperacao('depositar')" 
+                                class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 rounded-lg transition">
+                                + Depositar
+                            </button>
+                            <button onclick="realizarOperacao('sacar')" 
+                                class="bg-rose-600 hover:bg-rose-500 text-white font-semibold py-2 rounded-lg transition">
+                                - Sacar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
+                    <h2 class="text-lg font-semibold text-white mb-4">🔄 Transferência</h2>
+                    <form onsubmit="transferir(event)" class="space-y-3">
+                        <input type="number" id="transfOrigem" placeholder="Conta de Origem (ID)" required
+                            class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm">
+                        <input type="number" id="transfDestino" placeholder="Conta de Destino (ID)" required
+                            class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm">
+                        <input type="number" step="0.01" id="transfValor" placeholder="Valor (R$)" required
+                            class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm">
+                        <input type="password" id="transfSenha" placeholder="Sua Senha" required
+                            class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm">
+                        <button type="submit" 
+                            class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 rounded-lg transition">
+                            Transferir Agora
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-white">📄 Extrato</h2>
+                    <button onclick="consultarConta()" class="text-xs text-emerald-400 hover:underline">Atualizar</button>
+                </div>
+                <div id="listaExtrato" class="flex-1 overflow-y-auto space-y-2 max-h-[460px] pr-1">
+                    <p class="text-slate-500 text-sm text-center mt-10">Busque uma conta para ver o histórico.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-6 bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-white">📊 Evolução Histórica do Saldo Acumulado</h2>
+                <span class="text-xs text-slate-400">Simulação de saldo baseada nas movimentações</span>
+            </div>
+            <div class="relative h-72 w-full">
+                <canvas id="graficoEvolucao"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+        let meuGrafico = null;
+
+        function mostrarAlerta(mensagem, tipo = "sucesso") {
+            const alerta = document.getElementById("alerta");
+            alerta.textContent = mensagem;
+            alerta.className = "mb-6 p-4 rounded-lg border font-medium block ";
+            alerta.className += tipo === "sucesso" ? "bg-emerald-950/85 border-emerald-500 text-emerald-300" : "bg-rose-950/85 border-rose-500 text-rose-300";
+            setTimeout(() => alerta.classList.add("hidden"), 5000);
+        }
+
+        function formatarMoeda(valor) {
+            return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        async function criarConta(e) {
+            e.preventDefault();
+            const payload = {
+                id: parseInt(document.getElementById("novoId").value),
+                titular: document.getElementById("novoTitular").value,
+                saldo_inicial: parseFloat(document.getElementById("novoSaldo").value),
+                senha: document.getElementById("novaSenha").value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/contas/`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || "Erro ao criar conta");
+                
+                mostrarAlerta(data.mensagem, "sucesso");
+                document.getElementById("consultaId").value = payload.id;
+                consultarConta();
+                e.target.reset();
+            } catch (err) {
+                mostrarAlerta(err.message, "erro");
+            }
+        }
+
+        async function consultarConta() {
+            const id = document.getElementById("consultaId").value;
+            if (!id) return;
+
+            try {
+                const res = await fetch(`${API_URL}/contas/${id}`);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || "Conta não encontrada");
+
+                document.getElementById("painelConta").classList.remove("hidden");
+                document.getElementById("displayTitular").textContent = `${data.titular} (ID: ${data.id})`;
+                document.getElementById("displaySaldo").textContent = formatarMoeda(data.saldo);
+                
+                document.getElementById("opContaId").value = data.id;
+                document.getElementById("transfOrigem").value = data.id;
+
+                carregarExtratoEOGrafico(id);
+            } catch (err) {
+                mostrarAlerta(err.message, "erro");
+                document.getElementById("painelConta").classList.add("hidden");
+            }
+        }
+
+        async function realizarOperacao(tipo) {
+            const id = document.getElementById("opContaId").value;
+            const valor = parseFloat(document.getElementById("opValor").value);
+            const senha = document.getElementById("opSenha").value || "";
+
+            if (!id || !valor) {
+                mostrarAlerta("Preencha o ID da conta e o valor.", "erro");
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/contas/${id}/${tipo}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ valor, senha })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || "Erro na operação");
+
+                mostrarAlerta(data.mensagem, "sucesso");
+                document.getElementById("consultaId").value = id;
+                document.getElementById("opValor").value = "";
+                document.getElementById("opSenha").value = "";
+                consultarConta();
+            } catch (err) {
+                mostrarAlerta(err.message, "erro");
+            }
+        }
+
+        async function transferir(e) {
+            e.preventDefault();
+            const origemId = document.getElementById("transfOrigem").value;
+            const payload = {
+                conta_destino_id: parseInt(document.getElementById("transfDestino").value),
+                valor: parseFloat(document.getElementById("transfValor").value),
+                senha: document.getElementById("transfSenha").value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/contas/${origemId}/transferir`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || "Erro na transferência");
+
+                mostrarAlerta(data.mensagem, "sucesso");
+                document.getElementById("consultaId").value = origemId;
+                document.getElementById("transfValor").value = "";
+                document.getElementById("transfSenha").value = "";
+                consultarConta();
+            } catch (err) {
+                mostrarAlerta(err.message, "erro");
+            }
+        }
+
+        async function carregarExtratoEOGrafico(contaId) {
+            try {
+                const res = await fetch(`${API_URL}/contas/${contaId}/extrato`);
+                const data = await res.json();
+
+                const container = document.getElementById("listaExtrato");
+                container.innerHTML = "";
+
+                if (data.extrato.length === 0) {
+                    container.innerHTML = `<p class="text-slate-500 text-sm text-center mt-6">Nenhuma movimentação registrada.</p>`;
+                    atualizarGrafico([], []);
+                    return;
+                }
+
+                let labels = [];
+                let dadosSaldo = [];
+                let saldoAcumulado = 0;
+
+                data.extrato.forEach(item => {
+                    const isSaida = item.tipo === "SAQUE" || item.tipo === "TRANSF. ENVIADA";
+                    saldoAcumulado += isSaida ? -item.valor : item.valor;
+                    labels.push(item.data_hora);
+                    dadosSaldo.push(saldoAcumulado);
+                });
+
+                const extratoInvertido = [...data.extrato].reverse();
+                extratoInvertido.forEach(item => {
+                    const isSaida = item.tipo === "SAQUE" || item.tipo === "TRANSF. ENVIADA";
+                    const corValor = isSaida ? "text-rose-400" : "text-emerald-400";
+                    const sinal = isSaida ? "-" : "+";
+                    container.innerHTML += `
+                        <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700/70 flex justify-between items-center">
+                            <div>
+                                <p class="text-xs font-bold text-slate-200">${item.tipo}</p>
+                                <p class="text-[11px] text-slate-500">${item.data_hora}</p>
+                            </div>
+                            <span class="font-mono font-semibold text-sm ${corValor}">
+                                ${sinal} ${formatarMoeda(item.valor)}
+                            </span>
+                        </div>
+                    `;
+                });
+
+                atualizarGrafico(labels, dadosSaldo);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function atualizarGrafico(labels, dados) {
+            const ctx = document.getElementById('graficoEvolucao').getContext('2d');
+            if (meuGrafico) meuGrafico.destroy();
+
+            meuGrafico = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Evolução do Saldo (R$)',
+                        data: dados,
+                        borderColor: '#34d399',
+                        backgroundColor: 'rgba(52, 211, 153, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#10b981',
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8' } } },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#334155' } },
+                        y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
